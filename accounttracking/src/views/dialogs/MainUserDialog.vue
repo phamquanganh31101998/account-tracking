@@ -1,12 +1,12 @@
 <template>
     <v-dialog
-        width="70%" v-model="mainUserDialog"
-        >
-        <template v-slot:activator="{ on }">
+        persistent
+        width="70%" v-model="mainUserDialog" >
+        <!-- <template v-slot:activator="{ on }">
             <v-col class="d-flex" sm="4" md="4" xl="4" >
                 <v-btn v-on="on" @click="getAllUsers()">Xem các tài khoản</v-btn>
             </v-col>
-        </template>
+        </template> -->
 
         <v-card>
             <v-card-title
@@ -75,18 +75,40 @@
                     </v-col>
                 </v-row>
             </v-card-text>
+
+            <v-card-actions>
+                <div class="flex-grow-1"></div>
+                <v-btn
+                    color="red"
+                    text
+                    @click="turnOffMainUserDialog()"
+                >
+                    Cancel
+                </v-btn>
+            </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import axios from 'axios'
+import userManagerSettingDialog from './UserManagerSettingDialog'
 export default {
+    components: {
+        userManagerSettingDialog,
+    },
     data(){
         return{
             users: [],
             userManagerRelationships: [],
             userLoadingProgress: false,
-            mainUserDialog: false
         }
+    },
+    computed: {
+        ...mapGetters({
+            mainUserDialog: 'mainUserDialog'
+			// ...
+		})
     },
     methods: {
         getAllUsers(){
@@ -146,7 +168,23 @@ export default {
 				.then(result => {
 					this.userManagerRelationships = result.data.response;
 				});
-		},
+        },
+        getRole(roleId){
+			switch(roleId){
+				case 3: 
+					return 'Admin';
+				case 4:
+					return 'Technical'
+				case 5:
+					return 'Sale'
+			};
+        },
+        turnOffMainUserDialog(){
+            this.$store.dispatch('turnOffMainUserDialog');
+        }
+    },
+    created(){
+        this.getAllUsers();
     }
 }
 </script>

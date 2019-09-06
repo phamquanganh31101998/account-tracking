@@ -1,7 +1,7 @@
 <template>
     <v-container>
 		<!-- app bar start here -->
-		<v-app-bar app>
+		<!-- <v-app-bar app>
 			<v-toolbar-title class="headline text-uppercase">
 				<span></span>
 				<span class="font-weight-light"></span>
@@ -22,11 +22,6 @@
 					</template>
 					<v-card width="100%">
 						<v-card-title>
-						
-						<br>
-						
-						</v-card-title>
-						<v-card-text>
 							<v-row row>
 								<v-col xs="1" sm="1" md="1" lg="1">
 								<v-avatar>
@@ -46,12 +41,35 @@
 								</div>
 								</v-col>
 							</v-row>
+						</v-card-title>
+						<v-divider></v-divider>
+						<v-card-text>
+							 <v-list>
+								<v-list-item>
+								<v-list-item-icon>
+									<v-icon>account_circle</v-icon>
+								</v-list-item-icon>
+								<v-list-item-content>Profile</v-list-item-content>
+								</v-list-item>
+								<v-list-item>
+								<v-list-item-icon>
+									<v-icon>settings</v-icon>
+								</v-list-item-icon>
+								<v-list-item-content>Setting</v-list-item-content>
+								</v-list-item>
+							 </v-list>
 						</v-card-text>
+						<v-divider></v-divider>
 						<v-card-actions>
 						<v-container>
 							<v-row>
-							<v-col xs="3" lg="3" offset-md="2">
-								<v-btn outlined rounded color="purple" large @click="logout()"><span>Logout</span></v-btn>
+							<v-col xs="6" lg="6" offset-md="2">
+								<v-btn outlined rounded color="red" large @click="logout()" block>
+									<span>
+										Logout
+										<i class="material-icons" style="outlined" outlined>send</i>
+									</span>
+								</v-btn>
 							</v-col>
 							</v-row>
 						</v-container>
@@ -59,16 +77,25 @@
 					</v-card>
 				</v-menu>
 			</v-toolbar-items>
-		</v-app-bar>
+		</v-app-bar> -->
+		<appBar></appBar>
 		<br>
 		<br>
 		<!-- app bar end -->
 		<v-row row>
-			<v-dialog
+			<v-col class="d-flex" sm="2" md="2" xl="2" offset-sm="5" offset-md="5" offset-xl="5" block>
+				<v-btn @click="getAllUsers()" v-if="checkAdminId(currentUser.roleId)" style="background-color: #FFAB91;">
+					Các tài khoản
+					<i class="material-icons" style="outlined" outlined>person_outline</i>
+				</v-btn>
+				<mainUserDialog></mainUserDialog>
+			</v-col>
+			
+			<!-- <v-dialog
 				width="70%"
 				>
 				<template v-slot:activator="{ on }">
-					<v-col class="d-flex" sm="4" md="4" xl="4" >
+					<v-col class="d-flex" sm="3" md="3" xl="3" offset-sm="4" offset-md="4" offset-xl="4">
 						<v-btn v-on="on" @click="getAllUsers()">Xem các tài khoản</v-btn>
 					</v-col>
 				</template>
@@ -109,7 +136,7 @@
 										<td>{{item.userId}}</td>
 										<td>{{item.displayName}}</td>
 										<td>{{item.email}}</td>
-										<td>
+										<td> -->
 											<!-- <v-dialog width="50%" v-model="item.userManagerDialog" v-if="!checkAdmin(item.role)">
 												<template v-slot:activator="{ on }">
 													<a @click.prevent="getAccountById(item.userId)" v-on="on">{{item.role}}</a>
@@ -121,7 +148,7 @@
 													:users="users">
 												</userManagerSettingDialog>
 											</v-dialog> -->
-											<userManagerSettingDialog v-if="!checkAdmin(item.role)"
+											<!-- <userManagerSettingDialog v-if="!checkAdmin(item.role)"
 												@closeUserManagerSettingDialog="closeUserManagerSettingDialog(item.userManagerDialog)" 
 												:user="item" 
 												:userManagerRelationships="userManagerRelationships"
@@ -141,16 +168,17 @@
 						</v-row>
 					</v-card-text>
 				</v-card>
-			</v-dialog>
+			</v-dialog> -->
 
-			<v-col class="d-flex" sm="4" md="4" xl="4" >
-				<v-btn @click="getThreshold()" >Đặt chỉ số cảnh báo</v-btn>
+			<v-col class="d-flex" sm="3" md="3" xl="3">
+				<v-btn @click="getThreshold()" block v-if="checkAdminId(currentUser.roleId)" style="background-color: #FFF176;">
+					Đặt chỉ số cảnh báo
+					<i class="material-icons" >warning</i>
+				</v-btn>
 			</v-col>
 			<!-- :setThresholdDialog="setThresholdDialog"  -->
 			<!-- @closeThresholdDialog="this.$store.state.setThresholdDialog = false" -->
-			<thresholdDialog
-				@getDataFromServer="getDataFromServer()"
-				></thresholdDialog>
+			<thresholdDialog @getDataFromServer="getDataFromServer()"></thresholdDialog>
 			<!-- <v-dialog
 				v-model="setThresholdDialog"
 				width="500"
@@ -210,47 +238,14 @@
 					</v-card-actions>
 				</v-card>
 			</v-dialog> -->
-			<v-dialog
-				v-model="successDialog"
-				max-width="290"
-				>
-				<v-card>
-					<v-card-title class="headline" style="color: green;">Success</v-card-title>
-
-					<v-card-text>
-					<p class="body-1">Lưu lại thành công</p>
-					</v-card-text>
-
-					<v-card-actions>
-					<div class="flex-grow-1"></div>
-
-					</v-card-actions>
-				</v-card>
-			</v-dialog>
-			<v-dialog
-				v-model="failDialog"
-				max-width="290"
-				>
-				<v-card>
-					<v-card-title class="headline" style="color: red;">Fail</v-card-title>
-
-					<v-card-text>
-					<p class="body-1">Đã xảy ra lỗi. Xin hãy thử lại sau vài phút</p>
-					</v-card-text>
-
-					<v-card-actions>
-					<div class="flex-grow-1"></div>
-
-					</v-card-actions>
-				</v-card>
-			</v-dialog>
+			
 
 			
-			<v-col class="d-flex" sm="2" md="2" xl="2" offset-sm="2" offset-md="2" offset-xl="2">
-				<v-select
-				:items="items"
-				outlined
-				v-model="type"
+			<v-col class="d-flex" sm="2" md="2" xl="2">
+				<v-select block
+					:items="items"
+					outlined
+					v-model="type"
 				></v-select>
 			</v-col>
 
@@ -315,9 +310,21 @@
 								<td>{{ item.customerId }}</td>
 								<td>{{ item.customerDescriptiveName }}</td>
 								<td v-for="detail in item.trackingDetail" :key="detail.id">
+									<!-- <i class="material-icons" v-on="on" 
+										:style="getColor(detail.isWarning)" 
+										@mouseover="turnOnCompareValueToolTip(item.currency, detail.previousValue, detail.type, detail.isWarning, detail.changeValue)" 
+										@mouseout="turnOffCompareValueToolTip()"
+										>
+										brightness_1
+									</i>
+									{{checkNumberValue(detail.currentValue)}} {{getCurrency(detail.type, item.currency)}} {{checkRate(detail.type)}} -->
 									<v-tooltip top>
 										<template v-slot:activator="{ on }">
-										<i class="material-icons" v-on="on" :style="getColor(detail.isWarning)">brightness_1</i>
+										<i class="material-icons" v-on="on" 
+											:style="getColor(detail.isWarning)" 
+											>
+											brightness_1
+										</i>
 										{{checkNumberValue(detail.currentValue)}} {{getCurrency(detail.type, item.currency)}} {{checkRate(detail.type)}}
 										</template>
 										<template>
@@ -522,6 +529,41 @@
 		<disapprovedAdsDialog></disapprovedAdsDialog>
 		<missingAdsDialog></missingAdsDialog>
 		<missingExtensionsDialog></missingExtensionsDialog>
+		<compareValueToolTip></compareValueToolTip>
+		<v-dialog
+			v-model="successDialog"
+			max-width="290"
+			>
+			<v-card>
+				<v-card-title class="headline" style="color: green;">Success</v-card-title>
+
+				<v-card-text>
+				<p class="body-1">Lưu lại thành công</p>
+				</v-card-text>
+
+				<v-card-actions>
+				<div class="flex-grow-1"></div>
+
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+		<v-dialog
+			v-model="failDialog"
+			max-width="290"
+			>
+			<v-card>
+				<v-card-title class="headline" style="color: red;">Fail</v-card-title>
+
+				<v-card-text>
+				<p class="body-1">Đã xảy ra lỗi. Xin hãy thử lại sau vài phút</p>
+				</v-card-text>
+
+				<v-card-actions>
+				<div class="flex-grow-1"></div>
+
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
   </v-container>
   
   
@@ -540,6 +582,9 @@ import disapprovedAdsDialog from './dialogs/DisapprovedAdsDialog'
 import userManagerSettingDialog from './dialogs/UserManagerSettingDialog'
 import thresholdDialog from './dialogs/ThresholdDialog'
 import mainUserDialog from './dialogs/MainUserDialog'
+import appBar from '../components/AppBar'
+import navBar from '../components/NavBar'
+import compareValueToolTip from '../views/tooltips/CompareValueToolTip'
 export default {
 	components: {
 		missingAdsDialog,
@@ -547,7 +592,10 @@ export default {
 		disapprovedAdsDialog,
 		userManagerSettingDialog,
 		thresholdDialog,
-		mainUserDialog
+		mainUserDialog,
+		appBar,
+		navBar,
+		compareValueToolTip
 	},
 	data(){
         return {
@@ -761,7 +809,7 @@ export default {
 			this.page = 1;
         },
         page(){
-            this.displayData = [];
+            // this.displayData = [];
             this.setDisplayData();
 		},
 		//Nếu dư thì cộng thêm 1 trang
@@ -917,37 +965,39 @@ export default {
 				});
 		},
 		getAllUsers(){
-			this.users = [];
-			this.userLoadingProgress = true;
-			const user = JSON.parse(localStorage.getItem("user"));
-			const userId = JSON.stringify(user.userId);
-			const url = `http://dev.adstech.vn:8084/trackings/v1/admin/${userId}/users`;
-			axios.get(url, {
-					params: {
-						type: this.type
-					},
-					headers: {
-						Accept: "application/json",
-						Authorization: "Bearer " + localStorage.getItem("token")
-					}
-				})
-				.then(result => {
-					result.data.response.filter(element => {
-						let obj = {
-							userId: element.userId,
-							displayName: element.displayName,
-							email: element.email,
-							role: this.getRole(element.roleId),
-							roleId: element.roleId,
-							userManagerDialog: false
-						}
-						this.users.push(obj);
-					});
-					this.userLoadingProgress = false;
-					this.getUserManagerRelationships();
-				});
+			this.$store.dispatch('turnOnMainUserDialog');
+			// this.users = [];
+			// this.userLoadingProgress = true;
+			// const user = JSON.parse(localStorage.getItem("user"));
+			// const userId = JSON.stringify(user.userId);
+			// const url = `http://dev.adstech.vn:8084/trackings/v1/admin/${userId}/users`;
+			// axios.get(url, {
+			// 		params: {
+			// 			type: this.type
+			// 		},
+			// 		headers: {
+			// 			Accept: "application/json",
+			// 			Authorization: "Bearer " + localStorage.getItem("token")
+			// 		}
+			// 	})
+			// 	.then(result => {
+			// 		result.data.response.filter(element => {
+			// 			let obj = {
+			// 				userId: element.userId,
+			// 				displayName: element.displayName,
+			// 				email: element.email,
+			// 				role: this.getRole(element.roleId),
+			// 				roleId: element.roleId,
+			// 				userManagerDialog: false
+			// 			}
+			// 			this.users.push(obj);
+			// 		});
+			// 		this.userLoadingProgress = false;
+			// 		this.getUserManagerRelationships();
+			// 	});
 		},
 		setDisplayData(){
+			this.displayData = [];
 			let start = this.page * this.itemsPerPage - this.itemsPerPage;
 			let end = this.page * this.itemsPerPage;
 			for (let i = start; i < end; i++){
@@ -955,7 +1005,7 @@ export default {
 					this.displayData.push(this.fakeData[i]);
 				}
 			}
-			this.displayData = [...this.displayData];
+			// this.displayData = [...this.displayData];
 		},
 		changeType(){
 			if (this.type == 'FAR'){
@@ -1123,6 +1173,14 @@ export default {
 				return false;
 			}
 		},
+		checkAdminId(id){
+			if(id == 3){
+				return true;
+			}
+			else{
+				return false;
+			}
+		},
 		closeUserManagerSettingDialog(dialogId){
 			dialogId = false;
 			this.getAllUsers();
@@ -1143,12 +1201,27 @@ export default {
               				this.currentUser = element;	
             			}
           			});
-					console.log(this.currentUser);
         	});
 		},
 		logout(){
 			this.$store.dispatch('logout');
 		},
+		logging(){
+			console.log("Hello");
+		},
+		turnOnCompareValueToolTip(currency, previousValue, type, isWarning, changeValue){
+			let data = {
+				currency: currency,
+				previousValue: previousValue,
+				type: type,
+				isWarning: isWarning,
+				changeValue: changeValue
+			}
+			this.$store.dispatch('turnOnCompareValueToolTip', data);
+		},
+		turnOffCompareValueToolTip(){
+			this.$store.dispatch('turnOffCompareValueToolTip');
+		}
 	},
 	created(){
 		if(localStorage.getItem('itemsPerPage') === null){

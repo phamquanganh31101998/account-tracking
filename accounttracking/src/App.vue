@@ -63,7 +63,7 @@
     <br> -->
     
     <v-row>
-      <v-navigation-drawer v-model='drawer' :mini-variant.sync="mini" mini-variant-width="90" app dark class="">
+      <!-- <v-navigation-drawer v-model='drawer' :mini-variant.sync="mini" mini-variant-width="90" app dark class="">
         <v-list>
           <v-list-item-group>
             <v-list-item>
@@ -83,7 +83,8 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
-      </v-navigation-drawer>
+      </v-navigation-drawer> -->
+      <navBar v-if="showNavBar"></navBar>
         <v-col>
           <v-content>
             <router-view></router-view>
@@ -98,28 +99,40 @@
 <script>
 import { setInterval } from 'timers';
 import axios from 'axios';
+import navBar from './components/NavBar'
 export default {
   name: 'App',
   components: {
+    navBar
   },
 
   data: () => ({
     //
     name: '',
     email: '',
-    drawer: true,
+    // drawer: true,
     items: [
       { title: 'Home', icon: 'mdi-home-city' },
       { title: 'My Account', icon: 'mdi-account' },
       { title: 'Users', icon: 'mdi-account-group-outline' },
     ],
-    mini: true,
-    currentUser: null
+    // mini: true,
+    currentUser: null,
+    showNavBar: true
   }),
   watch: {
     // 'localStorage.getItem("user")'(){
     //   if(localStorage.getItem("user")){
     //     this.getAllUsers();
+    //   }
+    // }
+    // 'this.$router.currentRoute'(){
+    //   console.log(this.$router.currentRoute);
+    //   if (this.$router.currentRoute == 'http://localhost:8080/login'){
+    //     this.showNavBar = false;
+    //   }
+    //   else {
+    //     this.showNavBar = true;
     //   }
     // }
   },
@@ -177,6 +190,9 @@ export default {
 				return false;
 			}
 		}
-	}
+  },
+  created(){
+    console.log();
+  }
 };
 </script>

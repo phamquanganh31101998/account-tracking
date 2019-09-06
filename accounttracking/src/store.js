@@ -20,7 +20,10 @@ export default new Vuex.Store({
 		missingAdsProgress: false,
 		missingExtensionsProgress: false,
 		missingExtensionsId: 0,
-		setThresholdDialog: false
+		setThresholdDialog: false,
+		mainUserDialog: false,
+		compareValue: null,
+		compareValueToolTip: false
 	},
 	mutations: {
 		authToken(state, payload) {
@@ -117,6 +120,20 @@ export default new Vuex.Store({
 		},
 		turnOffThresholdDialog(state){
 			state.setThresholdDialog = false;
+		},
+		turnOnMainUserDialog(state){
+			state.mainUserDialog = true;
+		},
+		turnOffMainUserDialog(state){
+			state.mainUserDialog = false;
+		},
+		turnOnCompareValueToolTip(state, payload){
+			state.compareValue = payload;
+			state.compareValueToolTip = true;
+		},
+		turnOffCompareValueToolTip(state){
+			state.compareValue = null;
+			state.compareValueToolTip = false;
 		}
 	},
 	actions: {
@@ -162,7 +179,19 @@ export default new Vuex.Store({
 		},
 		turnOffThresholdDialog({commit}){
 			commit('turnOffThresholdDialog');
-		}
+		},
+		turnOnMainUserDialog({commit}){
+			commit('turnOnMainUserDialog');
+		},
+		turnOffMainUserDialog({commit}){
+			commit('turnOffMainUserDialog');
+		},
+		turnOnCompareValueToolTip({commit}, data){
+			commit('turnOnCompareValueToolTip', data);
+		},
+		turnOffCompareValueToolTip({commit}){
+			commit('turnOffCompareValueToolTip');
+		},
 	},
 	getters: {
 		missingAds: state => {
@@ -194,6 +223,15 @@ export default new Vuex.Store({
 		},
 		setThresholdDialog: state => {
 			return state.setThresholdDialog;
+		},
+		mainUserDialog: state => {
+			return state.mainUserDialog;
+		},
+		compareValue: state => {
+			return state.compareValue;
+		},
+		compareValueToolTip: state => {
+			return state.compareValueToolTip;
 		}
 	}
 })
